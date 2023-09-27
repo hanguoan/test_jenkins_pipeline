@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-demo
+  namespace: production
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins-demo
+  template:
+    metadata:
+      labels:
+        app: jenkins-demo
+    spec:
+      containers:
+      - image: xuegod/jenkins-demo:<BUILD_TAG>
+        imagePullPolicy: IfNotPresent
+        name: jenkins-demo
+        env:
+        - name: branch
+          value: <BRANCH_NAME>
+---
+apiVersion: v1
+kind: Service
+metadata:
+   name: jenkins-demo
+   namespace: production
+spec:
+   selector:
+     app: jenkins-demo
+   type: NodePort
+   ports:
+   - port: 18888
+     targetPort: 18888
+     nodePort: 31890
